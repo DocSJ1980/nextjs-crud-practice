@@ -15,9 +15,10 @@ interface OrderModalProps {
     setClientName: React.Dispatch<React.SetStateAction<string | null>>
     orders: string[]
     setOrders: React.Dispatch<React.SetStateAction<string[]>>
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const OrderModal: React.FC<OrderModalProps> = ({ bookId, isOpen, onClose, stock, accessToken, setAccessToken, clientName, setClientName, orders, setOrders }) => {
+const OrderModal: React.FC<OrderModalProps> = ({ bookId, isOpen, onClose, stock, accessToken, setAccessToken, clientName, setClientName, orders, setOrders, setLoading }) => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -55,7 +56,7 @@ const OrderModal: React.FC<OrderModalProps> = ({ bookId, isOpen, onClose, stock,
 
     const placeOrder = async (accessToken: string, clientName: string, bookId: string) => {
         try {
-            const response = await fetch(`/api/orders`, {
+            const response = await fetch(`/api/order`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -83,15 +84,18 @@ const OrderModal: React.FC<OrderModalProps> = ({ bookId, isOpen, onClose, stock,
     }
 
     const handleFormSubmit = async (e: React.FormEvent) => {
+        setLoading(true)
         e.preventDefault()
         if (!accessToken && !clientName) {
             const authRequest = await authenticate(formData.name, formData.email)
             if (authRequest.token && clientName) {
                 await placeOrder(authRequest.token, clientName, bookId)
             }
+            setLoading(false)
             onClose()
         } else if (accessToken && clientName) {
             await placeOrder(accessToken, clientName, bookId)
+            setLoading(false)
             onClose()
         }
     }

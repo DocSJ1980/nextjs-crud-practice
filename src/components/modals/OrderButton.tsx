@@ -15,6 +15,7 @@ const OrderButton: React.FC<OrderButtonProps> = ({ bookId, available, stock }) =
     const [accessToken, setAccessToken] = useState<string | null>(null)
     const [clientName, setClientName] = useState<string | null>(null)
     const [orders, setOrders] = useState<string[]>([])
+    const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
         const token = localStorage.getItem("accessToken");
@@ -42,7 +43,7 @@ const OrderButton: React.FC<OrderButtonProps> = ({ bookId, available, stock }) =
 
                     <div className='border-solid'>
                         <Button className="w-full text-lg mt-4" disabled={!available} onClick={handleOrderClick}>
-                            Order Now
+                            {!loading ? <span>Order Now</span> : <span>Loading...</span>}
                         </Button>
                     </div>
 
@@ -58,6 +59,7 @@ const OrderButton: React.FC<OrderButtonProps> = ({ bookId, available, stock }) =
                         setClientName={setClientName}
                         orders={orders}
                         setOrders={setOrders}
+                        setLoading={setLoading}
                     />
                 </DialogContent>
                 }
